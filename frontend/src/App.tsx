@@ -21,7 +21,7 @@ export const App: React.FC = () => {
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMessage({ text, type });
-    setTimeout(() => setToastMessage(null), 4000);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const loadDocuments = async () => {
@@ -90,7 +90,7 @@ export const App: React.FC = () => {
       setDocuments((prev) => [newDoc, ...prev]);
       selectDocument(newDoc);
       setActiveTab('workspace');
-      showToast(`Document '${newDoc.filename}' successfully parsed and validated!`);
+      showToast(`Document '${newDoc.filename}' successfully parsed & validated!`);
     } catch (err: any) {
       showToast(err.message || 'Failed to upload document', 'error');
     } finally {
@@ -114,7 +114,7 @@ export const App: React.FC = () => {
       setDocuments((prev) => [demoDoc, ...prev]);
       selectDocument(demoDoc);
       setActiveTab('workspace');
-      showToast('Enterprise Invoice demo generated and extracted!');
+      showToast('Enterprise Invoice demo ingested and verified!');
     } catch (err: any) {
       showToast(err.message || 'Error generating demo', 'error');
     } finally {
@@ -154,7 +154,7 @@ export const App: React.FC = () => {
       const updatedDoc: DocumentResponse = await res.json();
       selectDocument(updatedDoc);
       setDocuments((prev) => prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d)));
-      showToast('Modifications saved & logged to immutable audit trail!');
+      showToast('Modifications saved to immutable audit trail!');
     } catch (err: any) {
       showToast(err.message, 'error');
     }
@@ -177,7 +177,7 @@ export const App: React.FC = () => {
       const approvedDoc: DocumentResponse = await res.json();
       selectDocument(approvedDoc);
       setDocuments((prev) => prev.map((d) => (d.id === approvedDoc.id ? approvedDoc : d)));
-      showToast('Extraction approved & committed to enterprise database sink!');
+      showToast('Extraction committed to enterprise database sink!');
     } catch (err: any) {
       showToast(err.message, 'error');
     }
@@ -186,14 +186,14 @@ export const App: React.FC = () => {
   const hitlQueue = documents.filter((d) => d.status === 'NEEDS_REVIEW');
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#080a0f] text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-medium border backdrop-blur-xl animate-in fade-in slide-in-from-bottom-5 ${
+          className={`fixed bottom-5 right-5 z-50 px-3.5 py-2.5 rounded-lg shadow-xl flex items-center gap-2 text-xs font-medium border ${
             toastMessage.type === 'success'
-              ? 'bg-emerald-950/90 border-emerald-800 text-emerald-200'
-              : 'bg-rose-950/90 border-rose-800 text-rose-200'
+              ? 'bg-[#0d1712] border-emerald-800/80 text-emerald-200'
+              : 'bg-[#1a0f12] border-rose-800/80 text-rose-200'
           }`}
         >
           {toastMessage.type === 'success' ? (
@@ -216,20 +216,20 @@ export const App: React.FC = () => {
         isProcessing={isProcessing}
       />
 
-      {/* Processing Banner */}
+      {/* Subtle Processing Bar */}
       {isProcessing && (
-        <div className="bg-gradient-to-r from-indigo-900/60 via-sky-900/60 to-indigo-900/60 border-b border-indigo-700/40 px-6 py-2 flex items-center justify-center gap-2 text-xs text-sky-200 font-medium">
-          <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
-          Processing Multimodal Layout, VLM Extraction & Pydantic Reflection Loop...
+        <div className="bg-[#0f1422] border-b border-[#1f293d] px-6 py-1.5 flex items-center justify-center gap-2 text-xs text-blue-300 font-mono">
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+          <span>Multimodal Layout & Spatial VLM Reflection Loop in progress...</span>
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-6 overflow-hidden max-w-[1700px] w-full mx-auto">
+      {/* Main Workspace */}
+      <main className="flex-1 p-4 overflow-hidden w-full mx-auto">
         {activeTab === 'workspace' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-130px)]">
-            {/* Left Panel: High-res PDF with SVG Bounding Box Canvas */}
-            <div className="lg:col-span-7 h-full flex flex-col">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[calc(100vh-80px)]">
+            {/* Left Panel: Document Viewport with SVG Bounding Box Canvas */}
+            <div className="lg:col-span-7 h-full flex flex-col min-h-0">
               <DocumentViewer
                 page={selectedPage}
                 fields={selectedDoc?.latest_extraction?.fields || []}
@@ -238,8 +238,8 @@ export const App: React.FC = () => {
               />
             </div>
 
-            {/* Right Panel: Side-by-Side Pydantic Schema Editor */}
-            <div className="lg:col-span-5 h-full flex flex-col">
+            {/* Right Panel: Schema Inspector */}
+            <div className="lg:col-span-5 h-full flex flex-col min-h-0">
               <ExtractionForm
                 extraction={selectedDoc?.latest_extraction || null}
                 selectedFieldId={selectedFieldId}
@@ -252,27 +252,31 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'hitl' && (
-          <HITLQueueView
-            queue={hitlQueue}
-            onSelectDocument={(doc) => {
-              selectDocument(doc);
-              setActiveTab('workspace');
-            }}
-          />
+          <div className="max-w-6xl mx-auto pt-4">
+            <HITLQueueView
+              queue={hitlQueue}
+              onSelectDocument={(doc) => {
+                selectDocument(doc);
+                setActiveTab('workspace');
+              }}
+            />
+          </div>
         )}
 
         {activeTab === 'documents' && (
-          <DocumentsListView
-            documents={documents}
-            onSelectDocument={(doc) => {
-              selectDocument(doc);
-              setActiveTab('workspace');
-            }}
-          />
+          <div className="max-w-6xl mx-auto pt-4">
+            <DocumentsListView
+              documents={documents}
+              onSelectDocument={(doc) => {
+                selectDocument(doc);
+                setActiveTab('workspace');
+              }}
+            />
+          </div>
         )}
       </main>
 
-      {/* Immutable SOC2 Audit Drawer */}
+      {/* SOC2 Audit Drawer */}
       <AuditTrailDrawer
         isOpen={isAuditOpen}
         onClose={() => setIsAuditOpen(false)}

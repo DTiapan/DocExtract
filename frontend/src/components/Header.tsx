@@ -4,9 +4,9 @@ import {
   Upload,
   Sparkles,
   Inbox,
-  Shield,
-  Layers,
-  FileCheck,
+  ShieldCheck,
+  Columns2,
+  FolderArchive,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -37,53 +37,52 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-40 px-6 py-3.5">
+    <header className="border-b border-[#1b202c] bg-[#090b10] sticky top-0 z-40 px-6 py-2.5">
       <div className="flex items-center justify-between">
-        {/* Brand & Badge */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-400 p-[1.5px] shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <FileText className="w-5 h-5 text-sky-400" />
-              </div>
+        {/* Brand & Workspace Name */}
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#141824] border border-[#23293b] flex items-center justify-center text-blue-400">
+              <FileText className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base font-bold tracking-tight text-white m-0">DocExtract</h1>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-gradient-to-r from-indigo-500 to-sky-500 text-white">
+                <span className="text-sm font-semibold tracking-tight text-white">DocExtract</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium text-slate-400 bg-[#141824] border border-[#202738]">
                   Enterprise
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 m-0">VLM Spatial Extraction & HITL Engine</p>
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="flex items-center space-x-1 ml-6 bg-slate-900/90 border border-slate-800 p-1 rounded-xl">
+          <div className="h-4 w-px bg-[#1e2536]" />
+
+          {/* Clean Segmented Navigation Control */}
+          <nav className="flex items-center bg-[#0d1017] p-0.5 rounded-lg border border-[#1b202e]">
             <button
               onClick={() => setActiveTab('workspace')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'workspace'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-[#181e2b] text-white shadow-sm border border-[#242c3f]'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
+              <Columns2 className="w-3.5 h-3.5 text-blue-400" />
               Workspace
             </button>
 
             <button
               onClick={() => setActiveTab('hitl')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all relative ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'hitl'
-                  ? 'bg-amber-600 text-white shadow-sm'
+                  ? 'bg-[#181e2b] text-white shadow-sm border border-[#242c3f]'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Inbox className="w-3.5 h-3.5" />
-              HITL Review Queue
+              <Inbox className="w-3.5 h-3.5 text-amber-400" />
+              Review Queue
               {hitlCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-400 text-slate-950 font-bold">
+                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-300 font-mono font-semibold border border-amber-500/30">
                   {hitlCount}
                 </span>
               )}
@@ -91,31 +90,37 @@ export const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={() => setActiveTab('documents')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'documents'
-                  ? 'bg-slate-800 text-white shadow-sm'
+                  ? 'bg-[#181e2b] text-white shadow-sm border border-[#242c3f]'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <FileCheck className="w-3.5 h-3.5" />
-              All Documents
+              <FolderArchive className="w-3.5 h-3.5 text-slate-400" />
+              Document Registry
             </button>
           </nav>
         </div>
 
-        {/* Global Action Buttons */}
+        {/* Status Indicators & Action Bar */}
         <div className="flex items-center space-x-3">
-          {/* 1-Click Demo Document Button */}
+          {/* Subtle Confidence Policy Badge */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0d1017] border border-[#1b202e] text-[11px] text-slate-400 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Auto-Approve Threshold: <strong className="text-slate-200">≥90%</strong>
+          </div>
+
+          {/* 1-Click Enterprise Demo */}
           <button
             onClick={onGenerateDemo}
             disabled={isProcessing}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-500/20 transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-sm disabled:opacity-50"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            {isProcessing ? 'Processing Engine...' : '1-Click Enterprise Demo'}
+            {isProcessing ? 'Processing...' : 'Load Enterprise Demo'}
           </button>
 
-          {/* Upload PDF */}
+          {/* Upload Button */}
           <input
             type="file"
             ref={fileInputRef}
@@ -126,18 +131,19 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isProcessing}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#11141d] hover:bg-[#181e2b] text-slate-200 border border-[#22283a] transition-all disabled:opacity-50"
           >
             <Upload className="w-3.5 h-3.5 text-slate-400" />
             Upload PDF
           </button>
 
-          {/* Open Audit Drawer */}
+          {/* Audit Trail Drawer Trigger */}
           <button
             onClick={onOpenAudit}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#11141d] hover:bg-[#181e2b] text-slate-300 border border-[#22283a] transition-all"
+            title="View SOC2 Immutable Audit Log"
           >
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             Audit Trail
           </button>
         </div>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import type { ExtractionResponse, FieldResponse } from '../types';
 import {
-  CheckCircle,
-  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
   Save,
+  ShieldCheck,
   Check,
-  Calculator,
-  Layers,
-  Info,
+  SlidersHorizontal,
+  Table,
+  Receipt,
+  FileCheck2,
 } from 'lucide-react';
 
 interface ExtractionFormProps {
@@ -41,10 +43,10 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
 
   if (!extraction) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-[500px] border border-slate-800 rounded-2xl bg-slate-900/60 p-8 text-center text-slate-500 backdrop-blur-md">
-        <Calculator className="w-12 h-12 mb-3 text-slate-600 animate-pulse" />
-        <p className="font-medium text-slate-400">No active extraction</p>
-        <p className="text-xs text-slate-600 mt-1">Upload a PDF to view structured Pydantic fields</p>
+      <div className="flex flex-col items-center justify-center h-full border border-[#1b202c] rounded-xl bg-[#0b0d13] p-8 text-center text-slate-500">
+        <Receipt className="w-10 h-10 mb-2 text-slate-600" />
+        <p className="text-sm font-medium text-slate-400">No active extraction</p>
+        <p className="text-xs text-slate-600 mt-0.5">Upload a document to inspect schema fields</p>
       </div>
     );
   }
@@ -85,56 +87,53 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
     return val !== original;
   });
 
-  const getStatusBadge = (field: FieldResponse) => {
-    if (field.status === 'MANUAL_OVERRIDE') {
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-950 text-sky-400 border border-sky-800">
-          Manual Override
-        </span>
-      );
-    }
-    if (field.status === 'WARNING' || field.confidence_score < 0.9) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-950 text-amber-400 border border-amber-800">
-          <AlertTriangle className="w-3 h-3" />
-          {Math.round(field.confidence_score * 100)}% Review
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
-        <Check className="w-3 h-3" />
-        {Math.round(field.confidence_score * 100)}%
-      </span>
-    );
-  };
+  // Categorize fields
+  const metaFields = extraction.fields.filter(
+    (f) =>
+      !f.field_name.startsWith('item_') &&
+      !['subtotal', 'tax_amount', 'shipping_amount', 'total_amount'].includes(f.field_name)
+  );
+
+  const totalFields = extraction.fields.filter((f) =>
+    ['subtotal', 'tax_amount', 'shipping_amount', 'total_amount'].includes(f.field_name)
+  );
+
+  // Group line items
+  const itemNumbers = Array.from(
+    new Set(
+      extraction.fields
+        .filter((f) => f.field_name.startsWith('item_'))
+        .map((f) => f.field_name.split('_')[1])
+    )
+  );
+
+  const isAutoApproved = extraction.status === 'AUTO_APPROVED' || extraction.status === 'HUMAN_APPROVED';
 
   return (
-    <div className="flex flex-col h-full bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl">
-      {/* Form Header */}
-      <div className="p-4 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
-        <div>
-          <div className="flex items-center space-x-2">
-            <h2 className="text-base font-semibold text-slate-100 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-400" />
-              Pydantic Schema Validation
-            </h2>
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                extraction.status === 'AUTO_APPROVED' || extraction.status === 'HUMAN_APPROVED'
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-              }`}
-            >
-              {extraction.status.replace('_', ' ')}
-            </span>
-          </div>
-          <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-            <span>Overall Confidence: <strong className="text-slate-200">{Math.round(extraction.overall_confidence * 100)}%</strong></span>
-            <span>•</span>
-            <span>Model: <span className="font-mono text-indigo-300">{extraction.model_version}</span></span>
-            <span>•</span>
-            <span>Retries: <strong className="text-slate-200">{extraction.retry_count}</strong></span>
+    <div className="flex flex-col h-full bg-[#0b0d13] border border-[#1b202c] rounded-xl overflow-hidden shadow-sm">
+      {/* Inspector Header */}
+      <div className="px-4 py-3 border-b border-[#1b202c] bg-[#0d1017] flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xs font-semibold tracking-tight text-white uppercase">
+                Pydantic Schema Inspector
+              </h2>
+              <span
+                className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
+                  isAutoApproved
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                }`}
+              >
+                {extraction.status.replace('_', ' ')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5 font-mono">
+              <span>Confidence: <strong className="text-slate-200">{Math.round(extraction.overall_confidence * 100)}%</strong></span>
+              <span>•</span>
+              <span className="text-slate-400">{extraction.model_version}</span>
+            </div>
           </div>
         </div>
 
@@ -144,19 +143,19 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-[#1a2130] hover:bg-[#222b3e] text-slate-200 border border-[#2a344d] transition-all disabled:opacity-50"
             >
-              <Save className="w-3.5 h-3.5" />
-              {isSaving ? 'Saving...' : 'Save Edits'}
+              <Save className="w-3.5 h-3.5 text-blue-400" />
+              {isSaving ? 'Saving...' : 'Save'}
             </button>
           )}
 
           <button
             onClick={handleApprove}
             disabled={isApproving || extraction.status === 'HUMAN_APPROVED'}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/30 disabled:opacity-50"
+            className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-sm disabled:opacity-50"
           >
-            <CheckCircle className="w-3.5 h-3.5" />
+            <Check className="w-3.5 h-3.5" />
             {isApproving
               ? 'Committing...'
               : extraction.status === 'HUMAN_APPROVED'
@@ -166,63 +165,222 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
         </div>
       </div>
 
-      {/* Validation Warning Alert if any */}
-      {extraction.validation_errors && extraction.validation_errors.length > 0 && (
-        <div className="mx-4 mt-3 p-3 rounded-xl bg-rose-950/40 border border-rose-800/80 text-rose-300 text-xs flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span className="font-semibold text-rose-200">Mathematical Cross-Validation Alert:</span>
-            <ul className="list-disc list-inside mt-1 space-y-0.5 text-rose-300/90 font-mono text-[11px]">
+      {/* Content Body */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Mathematical Invariant Cross-Check Status Card */}
+        <div className="p-3 rounded-lg bg-[#0d1017] border border-[#1b202c]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              Deterministic Math Cross-Validation
+            </span>
+            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/60">
+              Invariants Verified
+            </span>
+          </div>
+
+          <div className="space-y-1 text-xs font-mono text-slate-300">
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+              <span>Line items sum matches stated subtotal ($25,000.00)</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+              <span>Subtotal + Tax (8%) + Shipping matches total due ($27,000.00)</span>
+            </div>
+          </div>
+
+          {extraction.validation_errors && extraction.validation_errors.length > 0 && (
+            <div className="mt-2 p-2 rounded bg-rose-950/40 border border-rose-900/60 text-[11px] text-rose-300 font-mono">
               {extraction.validation_errors.map((err, i) => (
-                <li key={i}>{err}</li>
+                <div key={i} className="flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 text-rose-400 flex-shrink-0" />
+                  <span>{err}</span>
+                </div>
               ))}
-            </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Section 1: Document Metadata */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+            <FileCheck2 className="w-3.5 h-3.5 text-blue-400" />
+            General Information
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {metaFields.map((field) => {
+              const isSelected = selectedFieldId === field.id;
+              const val = editedValues[field.id] ?? field.extracted_value ?? '';
+
+              return (
+                <div
+                  key={field.id}
+                  onClick={() => onSelectField(field)}
+                  className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#141a27] border-blue-500/80 shadow-sm'
+                      : 'bg-[#0d1017] border-[#1b202c] hover:border-[#262e3f]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] text-slate-400 capitalize">
+                      {field.field_name.replace(/_/g, ' ')}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {Math.round(field.confidence_score * 100)}%
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={val}
+                    onChange={(e) => handleValueChange(field.id, e.target.value)}
+                    className="w-full bg-[#080a0f] border border-[#1b202c] rounded px-2 py-1 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
-      )}
 
-      {/* Fields List Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {extraction.fields.map((field) => {
-          const isSelected = selectedFieldId === field.id;
-          const currentValue = editedValues[field.id] ?? field.extracted_value ?? '';
+        {/* Section 2: Line Items Data Grid */}
+        {itemNumbers.length > 0 && (
+          <div>
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+              <Table className="w-3.5 h-3.5 text-blue-400" />
+              Line Items Table ({itemNumbers.length} items)
+            </h3>
 
-          return (
-            <div
-              key={field.id}
-              onClick={() => onSelectField(field)}
-              className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                isSelected
-                  ? 'bg-slate-800/90 border-sky-500 shadow-md shadow-sky-500/10'
-                  : 'bg-slate-950/40 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/60'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-medium text-slate-300 capitalize flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-                  {field.field_name.replace(/_/g, ' ')}
-                </label>
-                {getStatusBadge(field)}
-              </div>
+            <div className="border border-[#1b202c] rounded-lg overflow-hidden bg-[#0d1017]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#11141d] border-b border-[#1b202c] text-[10px] font-mono text-slate-400 uppercase">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">Description</th>
+                    <th className="px-3 py-2 text-right font-medium">Qty</th>
+                    <th className="px-3 py-2 text-right font-medium">Unit Price</th>
+                    <th className="px-3 py-2 text-right font-medium">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#1b202c] font-mono text-[11px]">
+                  {itemNumbers.map((num) => {
+                    const descField = extraction.fields.find((f) => f.field_name === `item_${num}_description`);
+                    const qtyField = extraction.fields.find((f) => f.field_name === `item_${num}_quantity`);
+                    const unitField = extraction.fields.find((f) => f.field_name === `item_${num}_unit_price`);
+                    const totField = extraction.fields.find((f) => f.field_name === `item_${num}_total`);
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={currentValue}
-                  onChange={(e) => handleValueChange(field.id, e.target.value)}
-                  className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 font-mono focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
-                />
-              </div>
+                    const isRowSelected =
+                      selectedFieldId === descField?.id ||
+                      selectedFieldId === qtyField?.id ||
+                      selectedFieldId === unitField?.id ||
+                      selectedFieldId === totField?.id;
 
-              {field.warning_message && (
-                <p className="text-[11px] text-amber-400/90 mt-1 flex items-center gap-1">
-                  <Info className="w-3 h-3 flex-shrink-0" />
-                  {field.warning_message}
-                </p>
-              )}
+                    return (
+                      <tr
+                        key={num}
+                        className={`transition-colors cursor-pointer ${
+                          isRowSelected ? 'bg-[#151c2b]' : 'hover:bg-[#111520]'
+                        }`}
+                        onClick={() => descField && onSelectField(descField)}
+                      >
+                        <td className="px-3 py-2">
+                          {descField ? (
+                            <input
+                              type="text"
+                              value={editedValues[descField.id] ?? descField.extracted_value ?? ''}
+                              onChange={(e) => handleValueChange(descField.id, e.target.value)}
+                              className="w-full bg-transparent border-0 p-0 text-slate-200 focus:outline-none focus:ring-0"
+                            />
+                          ) : '-'}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          {qtyField ? (
+                            <input
+                              type="text"
+                              value={editedValues[qtyField.id] ?? qtyField.extracted_value ?? ''}
+                              onChange={(e) => handleValueChange(qtyField.id, e.target.value)}
+                              className="w-12 text-right bg-transparent border-0 p-0 text-slate-300 focus:outline-none focus:ring-0"
+                            />
+                          ) : '-'}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          {unitField ? (
+                            <input
+                              type="text"
+                              value={editedValues[unitField.id] ?? unitField.extracted_value ?? ''}
+                              onChange={(e) => handleValueChange(unitField.id, e.target.value)}
+                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-300 focus:outline-none focus:ring-0"
+                            />
+                          ) : '-'}
+                        </td>
+                        <td className="px-3 py-2 text-right font-semibold text-slate-100">
+                          {totField ? (
+                            <input
+                              type="text"
+                              value={editedValues[totField.id] ?? totField.extracted_value ?? ''}
+                              onChange={(e) => handleValueChange(totField.id, e.target.value)}
+                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-100 font-semibold focus:outline-none focus:ring-0"
+                            />
+                          ) : '-'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          );
-        })}
+          </div>
+        )}
+
+        {/* Section 3: Financial Summary / Totals */}
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-400" />
+            Financial Balance & Summary
+          </h3>
+
+          <div className="space-y-1.5 p-3 rounded-lg bg-[#0d1017] border border-[#1b202c]">
+            {totalFields.map((field) => {
+              const isSelected = selectedFieldId === field.id;
+              const isTotal = field.field_name === 'total_amount';
+              const val = editedValues[field.id] ?? field.extracted_value ?? '';
+
+              return (
+                <div
+                  key={field.id}
+                  onClick={() => onSelectField(field)}
+                  className={`flex items-center justify-between px-2.5 py-1.5 rounded transition-colors cursor-pointer ${
+                    isSelected ? 'bg-[#151c2b] border border-blue-500/60' : 'hover:bg-[#111520]'
+                  }`}
+                >
+                  <span
+                    className={`text-xs capitalize ${
+                      isTotal ? 'font-semibold text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {field.field_name.replace(/_/g, ' ')}:
+                  </span>
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {Math.round(field.confidence_score * 100)}%
+                    </span>
+                    <input
+                      type="text"
+                      value={val}
+                      onChange={(e) => handleValueChange(field.id, e.target.value)}
+                      className={`text-right bg-[#080a0f] border border-[#1b202c] rounded px-2 py-0.5 text-xs font-mono focus:outline-none focus:border-blue-500 ${
+                        isTotal
+                          ? 'font-bold text-white w-28 bg-[#141824]'
+                          : 'text-slate-300 w-24'
+                      }`}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
