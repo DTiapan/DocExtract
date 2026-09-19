@@ -186,20 +186,20 @@ export const App: React.FC = () => {
   const hitlQueue = documents.filter((d) => d.status === 'NEEDS_REVIEW');
 
   return (
-    <div className="min-h-screen bg-[#080a0f] text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className={`fixed bottom-5 right-5 z-50 px-3.5 py-2.5 rounded-lg shadow-xl flex items-center gap-2 text-xs font-medium border ${
+          className={`fixed bottom-5 right-5 z-50 px-3.5 py-2.5 rounded-lg shadow-lg flex items-center gap-2 text-xs font-medium border bg-white ${
             toastMessage.type === 'success'
-              ? 'bg-[#0d1712] border-emerald-800/80 text-emerald-200'
-              : 'bg-[#1a0f12] border-rose-800/80 text-rose-200'
+              ? 'border-emerald-200 text-emerald-800'
+              : 'border-rose-200 text-rose-800'
           }`}
         >
           {toastMessage.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           ) : (
-            <AlertCircle className="w-4 h-4 text-rose-400" />
+            <AlertCircle className="w-4 h-4 text-rose-600" />
           )}
           {toastMessage.text}
         </div>
@@ -218,8 +218,8 @@ export const App: React.FC = () => {
 
       {/* Subtle Processing Bar */}
       {isProcessing && (
-        <div className="bg-[#0f1422] border-b border-[#1f293d] px-6 py-1.5 flex items-center justify-center gap-2 text-xs text-blue-300 font-mono">
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+        <div className="bg-blue-50 border-b border-blue-100 px-6 py-1.5 flex items-center justify-center gap-2 text-xs text-blue-800 font-mono">
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
           <span>Multimodal Layout & Spatial VLM Reflection Loop in progress...</span>
         </div>
       )}

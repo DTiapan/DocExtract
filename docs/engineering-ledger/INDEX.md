@@ -22,6 +22,7 @@ Implemented DocExtract Enterprise — full end-to-end architecture with:
 
 ## Recent sessions
 
+- **2026-09-20 (Session 3)**: Overhauled color system to Executive Enterprise Light Workstation Palette (DR-005, LL-003). Eliminated hackathon dark neon AI matrix wireframes and pulsing animations in favor of crisp slate-50 canvas, neutral document desk (#f1f5f9), clean cobalt (#3b82f6) annotation outlines, and high-trust Stripe/AWS Textract styling across all components.
 - **2026-09-20 (Session 2)**: Resolved bounding box coordinate alignment using PyMuPDF proximity sorting (`near_y`, `near_x`) across table cells and refined regex disambiguation. Fixed CSS grid blowout with `min-w-0` and responsive document container scaling. Regenerated clean enterprise demo in SQLite database.
 - **2026-09-20 (Session 1)**: Completed Build phase: backend API + spatial parser + Pydantic reflection validator + HITL router + audit service + 10 passing tests + Vite/React dark-mode dashboard with shadcn/Linear aesthetic overhaul.
 - **2026-09-19**: Bootstrapped Craft framework (`craft.project.yaml`, `AGENTS.md`, `docs/engineering-ledger/`, 54 project-local skills in `.agents/skills/`). Formulated comprehensive architecture covering Scale, Benchmarks, and Fallbacks.

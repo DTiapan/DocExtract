@@ -7,8 +7,8 @@
   }
 
   body {
-    background-color: #080a0f;
-    color: #e2e8f0;
+    background-color: #f8fafc;
+    color: #0f172a;
     font-family: var(--font-sans);
     margin: 0;
     padding: 0;
@@ -17,20 +17,20 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Sleek modern minimalist scrollbars */
+  /* Clean enterprise minimalist scrollbars */
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1e2433;
+    background: #cbd5e1;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #2d3748;
+    background: #94a3b8;
   }
 }
 
@@ -38,18 +38,3 @@
   font-family: var(--font-mono);
 }
 
-/* Subtle high-precision selection highlight for active SVG box */
-@keyframes active-box-pulse {
-  0%, 100% {
-    stroke-opacity: 1;
-    stroke-width: 2.5px;
-  }
-  50% {
-    stroke-opacity: 0.65;
-    stroke-width: 2px;
-  }
-}
-
-.active-svg-box {
-  animation: active-box-pulse 2s ease-in-out infinite;
-}

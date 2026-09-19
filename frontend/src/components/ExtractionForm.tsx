@@ -43,10 +43,10 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
 
   if (!extraction) {
     return (
-      <div className="flex flex-col items-center justify-center h-full border border-[#1b202c] rounded-xl bg-[#0b0d13] p-8 text-center text-slate-500">
-        <Receipt className="w-10 h-10 mb-2 text-slate-600" />
-        <p className="text-sm font-medium text-slate-400">No active extraction</p>
-        <p className="text-xs text-slate-600 mt-0.5">Upload a document to inspect schema fields</p>
+      <div className="flex flex-col items-center justify-center h-full border border-slate-200 rounded-xl bg-white p-8 text-center text-slate-500 shadow-xs">
+        <Receipt className="w-10 h-10 mb-2 text-slate-400" />
+        <p className="text-sm font-semibold text-slate-700">No active extraction</p>
+        <p className="text-xs text-slate-500 mt-0.5">Upload a document to inspect schema fields</p>
       </div>
     );
   }
@@ -110,29 +110,29 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
   const isAutoApproved = extraction.status === 'AUTO_APPROVED' || extraction.status === 'HUMAN_APPROVED';
 
   return (
-    <div className="flex flex-col h-full bg-[#0b0d13] border border-[#1b202c] rounded-xl overflow-hidden shadow-sm">
+    <div className="flex flex-col h-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
       {/* Inspector Header */}
-      <div className="px-4 py-3 border-b border-[#1b202c] bg-[#0d1017] flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xs font-semibold tracking-tight text-white uppercase">
+              <h2 className="text-xs font-bold tracking-wider text-slate-800 uppercase">
                 Pydantic Schema Inspector
               </h2>
               <span
-                className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
+                className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${
                   isAutoApproved
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-amber-50 text-amber-700 border-amber-200'
                 }`}
               >
                 {extraction.status.replace('_', ' ')}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5 font-mono">
-              <span>Confidence: <strong className="text-slate-200">{Math.round(extraction.overall_confidence * 100)}%</strong></span>
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5 font-mono">
+              <span>Confidence: <strong className="text-slate-800 font-semibold">{Math.round(extraction.overall_confidence * 100)}%</strong></span>
               <span>•</span>
-              <span className="text-slate-400">{extraction.model_version}</span>
+              <span className="text-slate-500">{extraction.model_version}</span>
             </div>
           </div>
         </div>
@@ -143,9 +143,9 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-[#1a2130] hover:bg-[#222b3e] text-slate-200 border border-[#2a344d] transition-all disabled:opacity-50"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-all shadow-xs disabled:opacity-50"
             >
-              <Save className="w-3.5 h-3.5 text-blue-400" />
+              <Save className="w-3.5 h-3.5 text-blue-600" />
               {isSaving ? 'Saving...' : 'Save'}
             </button>
           )}
@@ -153,7 +153,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
           <button
             onClick={handleApprove}
             disabled={isApproving || extraction.status === 'HUMAN_APPROVED'}
-            className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-sm disabled:opacity-50"
+            className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs disabled:opacity-50"
           >
             <Check className="w-3.5 h-3.5" />
             {isApproving
@@ -166,35 +166,35 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
       </div>
 
       {/* Content Body */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
         {/* Mathematical Invariant Cross-Check Status Card */}
-        <div className="p-3 rounded-lg bg-[#0d1017] border border-[#1b202c]">
+        <div className="p-3 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               Deterministic Math Cross-Validation
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/60">
+            <span className="text-[10px] font-mono font-semibold text-emerald-800 bg-emerald-100/80 px-1.5 py-0.5 rounded border border-emerald-200">
               Invariants Verified
             </span>
           </div>
 
-          <div className="space-y-1 text-xs font-mono text-slate-300">
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+          <div className="space-y-1 text-xs font-mono text-emerald-800">
+            <div className="flex items-center gap-1.5 text-[11px]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
               <span>Line items sum matches stated subtotal ($25,000.00)</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+            <div className="flex items-center gap-1.5 text-[11px]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
               <span>Subtotal + Tax (8%) + Shipping matches total due ($27,000.00)</span>
             </div>
           </div>
 
           {extraction.validation_errors && extraction.validation_errors.length > 0 && (
-            <div className="mt-2 p-2 rounded bg-rose-950/40 border border-rose-900/60 text-[11px] text-rose-300 font-mono">
+            <div className="mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-[11px] text-rose-800 font-mono">
               {extraction.validation_errors.map((err, i) => (
                 <div key={i} className="flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3 text-rose-400 flex-shrink-0" />
+                  <AlertCircle className="w-3 h-3 text-rose-600 flex-shrink-0" />
                   <span>{err}</span>
                 </div>
               ))}
@@ -204,8 +204,8 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
 
         {/* Section 1: Document Metadata */}
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-            <FileCheck2 className="w-3.5 h-3.5 text-blue-400" />
+          <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center gap-1.5">
+            <FileCheck2 className="w-3.5 h-3.5 text-blue-600" />
             General Information
           </h3>
 
@@ -220,15 +220,15 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                   onClick={() => onSelectField(field)}
                   className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-[#141a27] border-blue-500/80 shadow-sm'
-                      : 'bg-[#0d1017] border-[#1b202c] hover:border-[#262e3f]'
+                      ? 'bg-blue-50/60 border-blue-500 shadow-xs'
+                      : 'bg-slate-50/60 border-slate-200 hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] text-slate-400 capitalize">
+                    <span className="text-[11px] text-slate-600 font-medium capitalize">
                       {field.field_name.replace(/_/g, ' ')}
                     </span>
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-[10px] font-mono text-slate-500">
                       {Math.round(field.confidence_score * 100)}%
                     </span>
                   </div>
@@ -236,7 +236,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                     type="text"
                     value={val}
                     onChange={(e) => handleValueChange(field.id, e.target.value)}
-                    className="w-full bg-[#080a0f] border border-[#1b202c] rounded px-2 py-1 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-xs font-mono text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
                   />
                 </div>
               );
@@ -247,14 +247,14 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
         {/* Section 2: Line Items Data Grid */}
         {itemNumbers.length > 0 && (
           <div>
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-              <Table className="w-3.5 h-3.5 text-blue-400" />
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center gap-1.5">
+              <Table className="w-3.5 h-3.5 text-blue-600" />
               Line Items Table ({itemNumbers.length} items)
             </h3>
 
-            <div className="border border-[#1b202c] rounded-lg overflow-hidden bg-[#0d1017]">
+            <div className="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-xs">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#11141d] border-b border-[#1b202c] text-[10px] font-mono text-slate-400 uppercase">
+                <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-mono text-slate-600 uppercase">
                   <tr>
                     <th className="px-3 py-2 font-medium">Description</th>
                     <th className="px-3 py-2 text-right font-medium">Qty</th>
@@ -262,7 +262,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                     <th className="px-3 py-2 text-right font-medium">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1b202c] font-mono text-[11px]">
+                <tbody className="divide-y divide-slate-200/80 font-mono text-[11px]">
                   {itemNumbers.map((num) => {
                     const descField = extraction.fields.find((f) => f.field_name === `item_${num}_description`);
                     const qtyField = extraction.fields.find((f) => f.field_name === `item_${num}_quantity`);
@@ -279,7 +279,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                       <tr
                         key={num}
                         className={`transition-colors cursor-pointer ${
-                          isRowSelected ? 'bg-[#151c2b]' : 'hover:bg-[#111520]'
+                          isRowSelected ? 'bg-blue-50/70' : 'hover:bg-slate-50/70'
                         }`}
                         onClick={() => descField && onSelectField(descField)}
                       >
@@ -289,7 +289,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                               type="text"
                               value={editedValues[descField.id] ?? descField.extracted_value ?? ''}
                               onChange={(e) => handleValueChange(descField.id, e.target.value)}
-                              className="w-full bg-transparent border-0 p-0 text-slate-200 focus:outline-none focus:ring-0"
+                              className="w-full bg-transparent border-0 p-0 text-slate-800 focus:outline-none focus:ring-0 font-sans text-xs"
                             />
                           ) : '-'}
                         </td>
@@ -299,7 +299,7 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                               type="text"
                               value={editedValues[qtyField.id] ?? qtyField.extracted_value ?? ''}
                               onChange={(e) => handleValueChange(qtyField.id, e.target.value)}
-                              className="w-12 text-right bg-transparent border-0 p-0 text-slate-300 focus:outline-none focus:ring-0"
+                              className="w-12 text-right bg-transparent border-0 p-0 text-slate-700 focus:outline-none focus:ring-0"
                             />
                           ) : '-'}
                         </td>
@@ -309,17 +309,17 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                               type="text"
                               value={editedValues[unitField.id] ?? unitField.extracted_value ?? ''}
                               onChange={(e) => handleValueChange(unitField.id, e.target.value)}
-                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-300 focus:outline-none focus:ring-0"
+                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-700 focus:outline-none focus:ring-0"
                             />
                           ) : '-'}
                         </td>
-                        <td className="px-3 py-2 text-right font-semibold text-slate-100">
+                        <td className="px-3 py-2 text-right font-semibold text-slate-900">
                           {totField ? (
                             <input
                               type="text"
                               value={editedValues[totField.id] ?? totField.extracted_value ?? ''}
                               onChange={(e) => handleValueChange(totField.id, e.target.value)}
-                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-100 font-semibold focus:outline-none focus:ring-0"
+                              className="w-20 text-right bg-transparent border-0 p-0 text-slate-900 font-semibold focus:outline-none focus:ring-0"
                             />
                           ) : '-'}
                         </td>
@@ -334,12 +334,12 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
 
         {/* Section 3: Financial Summary / Totals */}
         <div>
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-400" />
+          <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center gap-1.5">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />
             Financial Balance & Summary
           </h3>
 
-          <div className="space-y-1.5 p-3 rounded-lg bg-[#0d1017] border border-[#1b202c]">
+          <div className="space-y-1.5 p-3 rounded-lg bg-slate-50/60 border border-slate-200">
             {totalFields.map((field) => {
               const isSelected = selectedFieldId === field.id;
               const isTotal = field.field_name === 'total_amount';
@@ -350,29 +350,29 @@ export const ExtractionForm: React.FC<ExtractionFormProps> = ({
                   key={field.id}
                   onClick={() => onSelectField(field)}
                   className={`flex items-center justify-between px-2.5 py-1.5 rounded transition-colors cursor-pointer ${
-                    isSelected ? 'bg-[#151c2b] border border-blue-500/60' : 'hover:bg-[#111520]'
+                    isSelected ? 'bg-blue-50 border border-blue-400' : 'hover:bg-slate-100/60'
                   }`}
                 >
                   <span
                     className={`text-xs capitalize ${
-                      isTotal ? 'font-semibold text-white' : 'text-slate-400'
+                      isTotal ? 'font-bold text-slate-900' : 'text-slate-600'
                     }`}
                   >
                     {field.field_name.replace(/_/g, ' ')}:
                   </span>
 
                   <div className="flex items-center space-x-2">
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-[10px] font-mono text-slate-500">
                       {Math.round(field.confidence_score * 100)}%
                     </span>
                     <input
                       type="text"
                       value={val}
                       onChange={(e) => handleValueChange(field.id, e.target.value)}
-                      className={`text-right bg-[#080a0f] border border-[#1b202c] rounded px-2 py-0.5 text-xs font-mono focus:outline-none focus:border-blue-500 ${
+                      className={`text-right bg-white border border-slate-200 rounded px-2 py-0.5 text-xs font-mono focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 ${
                         isTotal
-                          ? 'font-bold text-white w-28 bg-[#141824]'
-                          : 'text-slate-300 w-24'
+                          ? 'font-bold text-slate-900 w-28 border-slate-300'
+                          : 'text-slate-800 w-24'
                       }`}
                     />
                   </div>
