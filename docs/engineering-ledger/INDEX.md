@@ -22,7 +22,8 @@ Implemented DocExtract Enterprise — full end-to-end architecture with:
 
 ## Recent sessions
 
-- **2026-09-20**: Completed Build phase: backend API + spatial parser + Pydantic reflection validator + HITL router + audit service + 10 passing tests + Vite/React dark-mode dashboard.
+- **2026-09-20 (Session 2)**: Resolved bounding box coordinate alignment using PyMuPDF proximity sorting (`near_y`, `near_x`) across table cells and refined regex disambiguation. Fixed CSS grid blowout with `min-w-0` and responsive document container scaling. Regenerated clean enterprise demo in SQLite database.
+- **2026-09-20 (Session 1)**: Completed Build phase: backend API + spatial parser + Pydantic reflection validator + HITL router + audit service + 10 passing tests + Vite/React dark-mode dashboard with shadcn/Linear aesthetic overhaul.
 - **2026-09-19**: Bootstrapped Craft framework (`craft.project.yaml`, `AGENTS.md`, `docs/engineering-ledger/`, 54 project-local skills in `.agents/skills/`). Formulated comprehensive architecture covering Scale, Benchmarks, and Fallbacks.
 
 ## Quick links

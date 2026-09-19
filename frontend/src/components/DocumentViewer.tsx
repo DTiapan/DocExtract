@@ -124,20 +124,23 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
       </div>
 
       {/* Document Viewport */}
-      <div className="flex-1 overflow-auto p-6 flex justify-center items-start bg-[#06080c] relative">
+      <div className="flex-1 overflow-auto p-4 sm:p-6 flex justify-center items-start bg-[#06080c] relative">
         <div
           ref={imageContainerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setCursorPos(null)}
-          className="relative origin-top shadow-xl border border-[#1b202c] rounded-md overflow-hidden transition-transform duration-100 ease-out"
-          style={{ transform: `scale(${zoom})` }}
+          className="relative origin-top shadow-xl border border-[#1b202c] rounded-md overflow-hidden transition-transform duration-100 ease-out max-w-full"
+          style={{
+            width: `${Math.round(page.width / 2.5)}px`,
+            aspectRatio: `${page.width} / ${page.height}`,
+            transform: `scale(${zoom})`,
+          }}
         >
           {/* Document Render Image */}
           <img
             src={page.image_url}
             alt={`Page ${page.page_number}`}
-            className="block max-w-none select-none pointer-events-none"
-            style={{ width: `${page.width / 1.5}px`, height: `${page.height / 1.5}px` }}
+            className="w-full h-full block select-none pointer-events-none object-contain"
           />
 
           {/* SVG Bounding Box Canvas Overlay */}
@@ -153,6 +156,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 
               const width = Math.max(6, field.bbox_x_max - field.bbox_x_min);
               const height = Math.max(6, field.bbox_y_max - field.bbox_y_min);
+              const tooltipWidth = Math.max(60, field.field_name.length * 6.5 + 32);
+              const tooltipX = Math.min(field.bbox_x_min, 996 - tooltipWidth);
 
               return (
                 <g
@@ -186,11 +191,11 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
 
                   {/* Clean Minimalist Label Tooltip */}
                   {(isSelected || isHovered) && (
-                    <g transform={`translate(${field.bbox_x_min}, ${Math.max(14, field.bbox_y_min - 4)})`}>
+                    <g transform={`translate(${tooltipX}, ${Math.max(14, field.bbox_y_min - 4)})`}>
                       <rect
                         x={0}
                         y={-12}
-                        width={Math.max(60, field.field_name.length * 6.5 + 32)}
+                        width={tooltipWidth}
                         height={14}
                         fill="#0b0d13"
                         stroke={style.stroke}

@@ -229,7 +229,7 @@ export const App: React.FC = () => {
         {activeTab === 'workspace' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[calc(100vh-80px)]">
             {/* Left Panel: Document Viewport with SVG Bounding Box Canvas */}
-            <div className="lg:col-span-7 h-full flex flex-col min-h-0">
+            <div className="lg:col-span-7 h-full flex flex-col min-w-0 min-h-0">
               <DocumentViewer
                 page={selectedPage}
                 fields={selectedDoc?.latest_extraction?.fields || []}
@@ -239,7 +239,7 @@ export const App: React.FC = () => {
             </div>
 
             {/* Right Panel: Schema Inspector */}
-            <div className="lg:col-span-5 h-full flex flex-col min-h-0">
+            <div className="lg:col-span-5 h-full flex flex-col min-w-0 min-h-0">
               <ExtractionForm
                 extraction={selectedDoc?.latest_extraction || null}
                 selectedFieldId={selectedFieldId}

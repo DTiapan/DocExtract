@@ -1,8 +1,6 @@
-import os
 from pathlib import Path
-from typing import TypedDict, Any
+from typing import TypedDict, Any, Optional
 import fitz  # PyMuPDF
-from PIL import Image
 
 from backend.app.core.config import settings
 
@@ -12,12 +10,6 @@ class NormalizedBox(TypedDict):
     y_min: int
     x_max: int
     y_max: int
-
-
-class TextSpan(TypedDict):
-    text: str
-    bbox: NormalizedBox
-    confidence: float
 
 
 class RenderedPageData(TypedDict):
@@ -62,7 +54,6 @@ class SpatialDocumentParser:
             page = doc[page_idx]
             page_num = page_idx + 1
 
-            # Page dimensions in PDF points
             rect = page.rect
             page_width = rect.width
             page_height = rect.height
@@ -77,7 +68,6 @@ class SpatialDocumentParser:
             pix.save(str(image_filepath))
 
             # Extract text blocks and coordinates
-            # block format: (x0, y0, x1, y1, "text", block_no, block_type)
             raw_blocks = page.get_text("blocks")
             blocks: list[dict[str, Any]] = []
             full_page_text_parts: list[str] = []
@@ -115,6 +105,74 @@ class SpatialDocumentParser:
 
         doc.close()
         return pages_data
+
+    @classmethod
+    def locate_text_bbox(
+        cls,
+        pdf_path: Path,
+        search_text: str,
+        page_number: int = 1,
+        occurrence_index: int = 0,
+        near_y: Optional[int] = None,
+        near_x: Optional[int] = None,
+    ) -> Optional[dict[str, int]]:
+        """
+        Finds the exact normalized 0-1000 bounding box of a given text in the PDF.
+        Supports proximity matching (near_y, near_x) to disambiguate identical values
+        across multiple table rows or columns.
+        """
+        try:
+            doc = fitz.open(pdf_path)
+            if page_number > len(doc):
+                doc.close()
+                return None
+
+            page = doc[page_number - 1]
+            w, h = page.rect.width, page.rect.height
+
+            # Search exact text
+            rects = page.search_for(search_text)
+            if not rects and search_text.startswith("$"):
+                # Try searching without currency sign
+                rects = page.search_for(search_text[1:])
+
+            if not rects:
+                # Try searching first significant word
+                words = search_text.split()
+                if words:
+                    rects = page.search_for(words[0])
+
+            doc.close()
+
+            if rects:
+                boxes = [
+                    {
+                        "x_min": cls.normalize_coord(r.x0, w),
+                        "y_min": cls.normalize_coord(r.y0, h),
+                        "x_max": cls.normalize_coord(r.x1, w),
+                        "y_max": cls.normalize_coord(r.y1, h),
+                    }
+                    for r in rects
+                ]
+
+                # If proximity coordinates provided, pick closest box by euclidean distance
+                if near_y is not None or near_x is not None:
+                    def distance_sq(b: dict[str, int]) -> float:
+                        cy = (b["y_min"] + b["y_max"]) / 2.0
+                        cx = (b["x_min"] + b["x_max"]) / 2.0
+                        dy = (cy - near_y) if near_y is not None else 0.0
+                        dx = (cx - near_x) if near_x is not None else 0.0
+                        return dy * dy + dx * dx
+
+                    boxes.sort(key=distance_sq)
+                    return boxes[0]
+
+                idx = min(occurrence_index, len(boxes) - 1)
+                return boxes[idx]
+        except Exception as e:
+            print(f"[locate_text_bbox] Error locating '{search_text}': {e}")
+
+        return None
 
     @classmethod
     def snap_bbox_to_layout(
