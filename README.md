@@ -79,11 +79,11 @@ Enterprise financial extraction cannot rely on probability alone. Every extracti
 
 ### Invariant Rules Enforced:
 1. **Line Item Arithmetic**: For every row $i$:
-   $$\left| (\text{quantity}_i \times \text{unit\_price}_i) - \text{total}_i \right| \le 0.02$$
+   $$\left| (\text{Quantity}_i \times \text{UnitPrice}_i) - \text{Total}_i \right| \le 0.02$$
 2. **Subtotal Summation**: The sum of all item totals must equal the declared subtotal:
-   $$\left| \sum_{i=1}^{k} \text{total}_i - \text{subtotal} \right| \le 0.05$$
+   $$\left| \sum_{i=1}^{k} \text{Total}_i - \text{Subtotal} \right| \le 0.05$$
 3. **Grand Total Consistency**: Net payable must match tax, shipping, and subtotal:
-   $$\left| (\text{subtotal} + \text{tax\_amount} + \text{shipping\_amount}) - \text{total\_amount} \right| \le 0.05$$
+   $$\left| (\text{Subtotal} + \text{Tax} + \text{Shipping}) - \text{TotalDue} \right| \le 0.05$$
 4. **Spatial Coordinate Invariant**: All bounding boxes $[x_{\min}, y_{\min}, x_{\max}, y_{\max}]$ must be clamped to the range $[0, 1000]$ with:
    $$0 \le x_{\min} < x_{\max} \le 1000 \quad \text{and} \quad 0 \le y_{\min} < y_{\max} \le 1000$$
 
@@ -103,7 +103,7 @@ Every key technical decision is documented in the repository's [Engineering Ledg
 | :--- | :--- | :--- | :--- |
 | **DR-001** | **Craft Framework** | Ad-hoc scripts | Adopted Craft lifecycle routing and progressive engineering ledger (`phases.md`, `decisions.md`, `lessons.md`) to maintain persistent design memory. |
 | **DR-002** | **Hybrid VLM + Pydantic** | Pure LLM or OCR-only | Pure LLMs hallucinate numbers; OCR strips fail on 2D layouts. Combining vision with deterministic Python validation guarantees enterprise correctness. |
-| **DR-003** | **Proximity-Guided Bounding Boxes** | First-occurrence string matching | In tables with duplicate values (e.g., quantity `1.0` or repeated prices), first-occurrence matching misaligns boxes. Proximity sorting using Euclidean distance squared $((y - y_{\text{target}})^2 + (x - x_{\text{target}})^2)$ anchors boxes to their exact table cells. |
+| **DR-003** | **Proximity-Guided Bounding Boxes** | First-occurrence string matching | In tables with duplicate values (e.g., quantity `1.0` or repeated prices), first-occurrence matching misaligns boxes. Proximity sorting using Euclidean distance squared $((y - y_0)^2 + (x - x_0)^2)$ anchors boxes to their exact table cells. |
 | **DR-004** | **Normalized 0–1000 Coordinate Plane** | Raw pixel coordinates | Pixel dimensions vary by DPI (72 DPI vs 200 DPI vs 300 DPI). Normalizing coordinates to a scale-independent integer plane $[0, 1000]$ guarantees SVG overlays render accurately across all viewports. |
 | **DR-005** | **Executive Light Workstation Palette** | Cyberpunk dark mode with neon accents | Documents are physical white paper. Framing white PDFs inside pitch-black voids with neon green boxes creates severe visual fatigue. Adopting a slate/cobalt light theme matches standard enterprise workflows (Stripe, Retool, AWS Textract). |
 
